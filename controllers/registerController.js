@@ -1,24 +1,52 @@
 const bcrypt = require("bcrypt");
+const { jwtGenerator } = require("../utilities/JWTgenerator");
+const user = require("../model/user");
 const handleNewUser = async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || password)
-    return res
-      .status(400)
-      .json({ message: "Username and Password are required" });
+  const {
+    firstname,
+    lastname,
+    username,
+    email,
+    password,
+    role,
+    companyname,
+    industry,
+  } = req.body;
+  // Check for duplicate usernames and emails in the db
+  const duplicateUsername = await user.findOne({ username: username }).exec();
+  const duplicateEmail = await user.findOne({ email: email }).exec();
 
-  //check for duplicates
-  const duplicate = await User.findOne({ username: user }).exec();
-  if (duplicate) return res.sendStatus(409); //Conflict
-  try {
-    const hashedPassword = await bcrypt.hash(password, 8); //represents the number of salt rounds used for generating the hash
-    const result = await User.create({
-      username: uesr,
-      password: hashedPassword,
-    });
-    console.log(result);
-    res.status(201).json({ success: `${user} created!` });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  if (duplicateUsername) {
+    return res.status(409).send({ Umessage: " Username already exists" });
   }
+
+  if (duplicateEmail) {
+    return res.status(409).send({ Emessage: " Email already exists" });
+  }
+  const saltRounds = 10;
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  const newUser = new user({
+    firstname,
+    lastname,
+    username,
+    email,
+    hashedPassword,
+    role,
+    companyname,
+    industry,
+  });
+
+  // Save the user to the database
+  newUser
+    .save()
+    .then(() => {
+      const token = jwtGenerator(newUser);
+      res.status(200).json({ token });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("Error registering user");
+    });
 };
 module.exports = { handleNewUser };
