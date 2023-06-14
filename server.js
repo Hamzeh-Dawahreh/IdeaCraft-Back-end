@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
+const verifyJWT = require("./middleware/verifyJWT");
 const PORT = 3500;
 app.use(cors());
 app.use(express.json());
@@ -22,4 +23,6 @@ mongoose
 
 app.use("/register", require("./routes/register"));
 app.use("/authentication", require("./routes/auth"));
+app.use(verifyJWT);
+app.use("/users", require("./routes/users"));
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -16,7 +16,7 @@ const handleNewUser = async (req, res) => {
   const duplicateUsername = await user.findOne({ username: username }).exec();
   const duplicateEmail = await user.findOne({ email: email }).exec();
 
-  if (duplicateUsername) {
+  if (companyname == null && duplicateUsername) {
     return res.status(409).send({ Umessage: " Username already exists" });
   }
 
