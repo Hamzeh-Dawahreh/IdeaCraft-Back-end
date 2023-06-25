@@ -29,4 +29,5 @@ app.use("/register", require("./routes/register"));
 app.use("/authentication", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
 app.use("/form", require("./routes/services"));
+app.use("/books", require("./routes/booking"));
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
