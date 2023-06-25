@@ -1,13 +1,17 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
-const verifyJWT = require("./middleware/verifyJWT");
-const PORT = 3500;
+const PORT = process.env.PORT;
+
+const connectionURL = process.env.MONGODB_URL;
+
 app.use(cors());
 app.use(express.json());
-const connectionURL =
-  "mongodb+srv://hmzhdawahreh:admin@cluster0.judqrme.mongodb.net/";
+app.use("/images", express.static("images"));
+
 // Connect to the MongoDB database using Mongoose
 mongoose
   .connect(connectionURL, {
@@ -23,6 +27,6 @@ mongoose
 
 app.use("/register", require("./routes/register"));
 app.use("/authentication", require("./routes/auth"));
-app.use(verifyJWT);
 app.use("/users", require("./routes/users"));
+app.use("/form", require("./routes/services"));
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,5 +1,5 @@
-const user = require("../model/user");
-
+const user = require("../model/users");
+const company = require("../model/companys");
 const getUser = async (req, res) => {
   const userId = req.user_id;
 
@@ -11,25 +11,36 @@ const getUser = async (req, res) => {
   delete User.hashedPassword; // Remove the hashed password property
   return res.json(User);
 };
+const getCompany = async (req, res) => {
+  const userId = req.user_id;
 
-const updateUser = async (req, res) => {
+  const User = await company.findOne({ _id: userId }).exec();
+
+  if (!User) {
+    return res.status(204).json({ message: `User ID ${userId} not found` });
+  }
+  delete User.hashedPassword; // Remove the hashed password property
+  return res.json(User);
+};
+
+const updateCompany = async (req, res) => {
   const userId = req.user_id;
   const { companyname, industry, details, email } = req.body;
 
   try {
-    const User = await user.findById(userId);
-    if (!User) {
-      return res.status(404).json({ error: "User not found" });
+    const Company = await company.findById(userId);
+    if (!Company) {
+      return res.status(404).json({ error: "Company not found" });
     }
 
     // Update user details
-    User.companyname = companyname;
-    User.industry = industry;
-    User.details = details;
-    User.email = email;
+    Company.companyname = companyname;
+    Company.industry = industry;
+    Company.details = details;
+    Company.email = email;
 
     // Save the updated user to the database
-    await User.save();
+    await Company.save();
 
     res.status(200).json({ message: "User details updated successfully" });
   } catch (error) {
@@ -38,4 +49,4 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { getUser, updateUser };
+module.exports = { getUser, updateCompany, getCompany };

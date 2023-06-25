@@ -1,4 +1,4 @@
-const user = require("../model/user");
+const user = require("../model/users");
 const bcrypt = require("bcrypt");
 const { jwtGenerator } = require("../utilities/JWTgenerator");
 
