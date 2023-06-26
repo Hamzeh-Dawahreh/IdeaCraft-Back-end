@@ -11,8 +11,12 @@ const handleLogin = async (req, res) => {
 
   try {
     const foundCompany = await company.findOne({ email: email });
-    if (!foundCompany) return res.sendStatus(401); // Unauthorized
-
+    if (!foundCompany) {
+      return res.status(401).json({
+        error:
+          "There is no account with this email address! Make sure you are choosing the right role.",
+      });
+    }
     const match = await bcrypt.compare(password, foundCompany.hashedPassword);
     if (match) {
       const token = jwtGenerator(foundCompany);

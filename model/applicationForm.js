@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const application = new mongoose.Schema(
   {
-    companyId: {
+    company_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "company",
     },

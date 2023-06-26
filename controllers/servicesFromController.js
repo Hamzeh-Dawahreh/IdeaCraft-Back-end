@@ -24,7 +24,7 @@ const handleAddForm = async (req, res) => {
   }
 
   const newForm = new form({
-    companyId: userId,
+    company_id: userId,
     companyname: companyname,
     industry: industry,
     phone: phone,

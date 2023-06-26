@@ -3,6 +3,12 @@ const mongoose = require("mongoose");
 const bookingInfo = new mongoose.Schema(
   {
     user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Referencing the User model
+      required: true,
+    },
+
+    service_id: {
       type: String,
       required: true,
     },
