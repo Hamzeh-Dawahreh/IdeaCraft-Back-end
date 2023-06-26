@@ -21,6 +21,7 @@ const bookingInfo = new mongoose.Schema(
     },
     companyRes: {
       type: String,
+      default: "",
     },
     userConsent: {
       type: Boolean,

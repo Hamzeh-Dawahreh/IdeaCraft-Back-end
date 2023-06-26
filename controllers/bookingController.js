@@ -43,7 +43,7 @@ const getRequest = async (req, res) => {
 const companyRes = async (req, res) => {
   const company_id = req.user_id;
 
-  const { companyRes } = req.body;
+  const { companyRes, user_id, service_id } = req.body;
 
   try {
     // Check if the provided IDs match a record in the database
@@ -54,10 +54,14 @@ const companyRes = async (req, res) => {
     if (!booking) {
       return res.status(404).json({ message: "No matching record found" });
     }
-
     // Matching IDs, update the company response in the database
-    booking.companyRes = companyRes;
-    await booking.save();
+    const newBooking = new bookingInfo({
+      companyRes: companyRes,
+      company_id: company_id,
+      user_id: user_id,
+      service_id: service_id,
+    });
+    await newBooking.save();
 
     return res
       .status(200)
