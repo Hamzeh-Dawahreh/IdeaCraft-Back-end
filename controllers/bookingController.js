@@ -42,9 +42,23 @@ const getRequest = async (req, res) => {
 };
 const companyRes = async (req, res) => {
   const company_id = req.user_id;
-  const { companyRes, user_id, service_id, price } = req.body;
+  const { companyRes, user_id, service_id, price, companyConsent } = req.body;
 
   try {
+    // Check if userConsent value already exists in the database
+    const existingBooking = await bookingInfo.findOne({
+      company_id: company_id,
+      user_id: user_id,
+      service_id: service_id,
+    });
+    if (existingBooking && existingBooking.companyConsent !== undefined) {
+      // User consent value already exists
+      return res.status(200).json({
+        Errormessage: `You have already ${
+          existingBooking.companyConsent ? "approved" : "rejected"
+        }`,
+      });
+    }
     // Find and update the existing document in the bookingInfo collection
     const updatedBooking = await bookingInfo.findOneAndUpdate(
       {
@@ -52,7 +66,7 @@ const companyRes = async (req, res) => {
         user_id: user_id,
         service_id: service_id,
       },
-      { companyRes: companyRes, price: price },
+      { companyRes: companyRes, price: price, companyConsent: companyConsent },
       { new: true } // To return the updated document
     );
 
@@ -146,6 +160,48 @@ const userConsent = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+const companyConsent = async (req, res) => {
+  const company_id = req.user_id;
+  const { user_id, companyConsent, service_id } = req.body;
+
+  try {
+    // Check if userConsent value already exists in the database
+    const existingBooking = await bookingInfo.findOne({
+      company_id: company_id,
+      user_id: user_id,
+      service_id: service_id,
+    });
+    if (existingBooking && existingBooking.companyConsent !== undefined) {
+      // User consent value already exists
+      return res.status(200).json({
+        Errormessage: `You have already ${
+          existingBooking.companyConsent ? "approved" : "rejected"
+        }`,
+      });
+    }
+
+    // Find and update the existing document in the bookingInfo collection
+    const updatedBooking = await bookingInfo.findOneAndUpdate(
+      {
+        company_id: company_id,
+        user_id: user_id,
+        service_id: service_id,
+      },
+      { companyConsent: companyConsent },
+      { new: true } // To return the updated document
+    );
+    if (!updatedBooking) {
+      return res.status(404).json({ message: "No matching record found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Company response updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   handleRequest,
@@ -154,4 +210,5 @@ module.exports = {
   getResponse,
   getBooking,
   userConsent,
+  companyConsent,
 };

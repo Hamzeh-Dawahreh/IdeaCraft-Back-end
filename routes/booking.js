@@ -9,6 +9,7 @@ router.get("/getRequest", verifyJWT, bookingController.getRequest);
 router.post("/companyRes", verifyJWT, bookingController.companyRes);
 router.get("/getResponse", verifyJWT, bookingController.getResponse);
 router.get("/getBooking/:id", verifyJWT, bookingController.getBooking);
+router.post("/companyConsent", verifyJWT, bookingController.companyConsent);
 router.post("/userConsent", verifyJWT, bookingController.userConsent);
 
 module.exports = router;
