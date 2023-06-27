@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const application = new mongoose.Schema(
   {
     company_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "company",
+      type: String,
+      required: true,
     },
 
     companyname: {

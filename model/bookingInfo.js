@@ -9,11 +9,15 @@ const bookingInfo = new mongoose.Schema(
     },
 
     service_id: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "applicationForm", // Referencing the User model
+
       required: true,
     },
     company_id: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "company", // Referencing the company model
+
       required: true,
     },
     userReq: {
@@ -21,9 +25,14 @@ const bookingInfo = new mongoose.Schema(
     },
     companyRes: {
       type: String,
-      default: "",
+    },
+    price: {
+      type: Number,
     },
     userConsent: {
+      type: Boolean,
+    },
+    companyConsent: {
       type: Boolean,
     },
   },

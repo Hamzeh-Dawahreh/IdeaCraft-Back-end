@@ -42,33 +42,116 @@ const getRequest = async (req, res) => {
 };
 const companyRes = async (req, res) => {
   const company_id = req.user_id;
-
-  const { companyRes, user_id, service_id } = req.body;
+  const { companyRes, user_id, service_id, price } = req.body;
 
   try {
-    // Check if the provided IDs match a record in the database
-    const booking = await bookingInfo.findOne({
-      company_id: company_id,
-    });
+    // Find and update the existing document in the bookingInfo collection
+    const updatedBooking = await bookingInfo.findOneAndUpdate(
+      {
+        company_id: company_id,
+        user_id: user_id,
+        service_id: service_id,
+      },
+      { companyRes: companyRes, price: price },
+      { new: true } // To return the updated document
+    );
 
-    if (!booking) {
+    if (!updatedBooking) {
       return res.status(404).json({ message: "No matching record found" });
     }
-    // Matching IDs, update the company response in the database
-    const newBooking = new bookingInfo({
-      companyRes: companyRes,
-      company_id: company_id,
-      user_id: user_id,
-      service_id: service_id,
-    });
-    await newBooking.save();
 
     return res
       .status(200)
-      .json({ message: "Company response saved successfully" });
+      .json({ message: "Company response updated successfully" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-module.exports = { handleRequest, getRequest, companyRes };
+const getResponse = async (req, res) => {
+  const user_id = req.user_id;
+
+  try {
+    const bookings = await bookingInfo
+      .find({ user_id: user_id })
+      .populate("company_id", "-hashedPassword"); // Exclude the hashedPassword field
+
+    if (!bookings) {
+      return res.status(204).json({ message: `User ID ${user_id} not found` });
+    }
+
+    return res.json({ bookings });
+  } catch (error) {
+    // Handle any errors that occur during the database query
+    return res.status(500).json({ message: "Error retrieving user data" });
+  }
+};
+const getBooking = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const bookings = await bookingInfo
+      .findOne({ _id: id })
+      .populate("company_id", "-hashedPassword"); // Exclude the hashedPassword field
+
+    if (!bookings) {
+      return res.status(204).json({ message: `User ID ${user_id} not found` });
+    }
+
+    return res.json({ bookings });
+  } catch (error) {
+    // Handle any errors that occur during the database query
+    return res.status(500).json({ message: "Error retrieving user data" });
+  }
+};
+const userConsent = async (req, res) => {
+  const user_id = req.user_id;
+  const { company_id, userConsent, service_id } = req.body;
+
+  try {
+    // Check if userConsent value already exists in the database
+    const existingBooking = await bookingInfo.findOne({
+      company_id: company_id,
+      user_id: user_id,
+      service_id: service_id,
+    });
+    if (existingBooking && existingBooking.userConsent !== undefined) {
+      // User consent value already exists
+      return res.status(200).json({
+        Errormessage: `You have already ${
+          existingBooking.userConsent ? "approved" : "rejected"
+        }`,
+      });
+    }
+
+    // Find and update the existing document in the bookingInfo collection
+    const updatedBooking = await bookingInfo.findOneAndUpdate(
+      {
+        company_id: company_id,
+        user_id: user_id,
+        service_id: service_id,
+      },
+      { userConsent: userConsent },
+      { new: true } // To return the updated document
+    );
+    if (!updatedBooking) {
+      return res.status(404).json({ message: "No matching record found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Company response updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports = {
+  handleRequest,
+  getRequest,
+  companyRes,
+  getResponse,
+  getBooking,
+  userConsent,
+};
