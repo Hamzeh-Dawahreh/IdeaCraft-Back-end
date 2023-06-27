@@ -162,7 +162,7 @@ const userConsent = async (req, res) => {
 };
 const companyConsent = async (req, res) => {
   const company_id = req.user_id;
-  const { user_id, companyConsent, service_id } = req.body;
+  const { user_id, companyConsent, service_id, companyRes } = req.body;
 
   try {
     // Check if userConsent value already exists in the database
@@ -187,7 +187,7 @@ const companyConsent = async (req, res) => {
         user_id: user_id,
         service_id: service_id,
       },
-      { companyConsent: companyConsent },
+      { companyConsent: companyConsent, companyRes: companyRes },
       { new: true } // To return the updated document
     );
     if (!updatedBooking) {
