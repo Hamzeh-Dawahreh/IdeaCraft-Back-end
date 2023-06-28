@@ -31,4 +31,5 @@ router.post(
   servicesFormController.handleAddForm
 );
 router.get("/getRealEstate", servicesFormController.getRealEstate);
+router.get("/getService", verifyJWT, servicesFormController.getService);
 module.exports = router;

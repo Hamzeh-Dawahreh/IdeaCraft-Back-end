@@ -4,7 +4,17 @@ const handleRequest = async (req, res) => {
   try {
     const user_id = req.user_id;
     const { userReq, service_id, company_id } = req.body;
-
+    const alreadyBooked = await bookingInfo.findOne({
+      user_id: user_id,
+      service_id: service_id,
+      company_id: company_id,
+    });
+    console.log("alreadyBooked", alreadyBooked);
+    if (alreadyBooked) {
+      return res
+        .status(409)
+        .send({ message: " You have already booked this service" });
+    }
     // Create a new document in the bookingInfo collection
     const newBooking = new bookingInfo({
       userReq: userReq,
@@ -109,7 +119,7 @@ const getBooking = async (req, res) => {
       .populate("company_id", "-hashedPassword"); // Exclude the hashedPassword field
 
     if (!bookings) {
-      return res.status(204).json({ message: `User ID ${user_id} not found` });
+      return res.status(204).json({ message: `No bookings found` });
     }
 
     return res.json({ bookings });

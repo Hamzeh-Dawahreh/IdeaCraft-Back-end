@@ -5,8 +5,8 @@ const company = require("../model/companys");
 const handleNewUser = async (req, res) => {
   const { firstname, lastname, username, email, password, role } = req.body;
   // Check for duplicate usernames and emails in the db
-  const duplicateUsername = await user.findOne({ username: username }).exec();
-  const duplicateEmail = await user.findOne({ email: email }).exec();
+  const duplicateUsername = await user.findOne({ username: username });
+  const duplicateEmail = await user.findOne({ email: email });
 
   if (duplicateUsername) {
     return res.status(409).send({ Umessage: " Username already exists" });
