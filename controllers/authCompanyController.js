@@ -1,4 +1,4 @@
-const company = require("../model/companys");
+const company = require("../model/companies");
 const bcrypt = require("bcrypt");
 const { jwtGenerator } = require("../utilities/JWTgenerator");
 

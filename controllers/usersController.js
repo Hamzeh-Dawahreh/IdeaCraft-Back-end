@@ -1,9 +1,9 @@
 const user = require("../model/users");
-const company = require("../model/companys");
+const company = require("../model/companies");
 const getUser = async (req, res) => {
   const userId = req.user_id;
 
-  const User = await user.findOne({ _id: userId }).exec();
+  const User = await user.findOne({ _id: userId });
 
   if (!User) {
     return res.status(204).json({ message: `User ID ${userId} not found` });
@@ -14,7 +14,7 @@ const getUser = async (req, res) => {
 const getCompany = async (req, res) => {
   const userId = req.user_id;
 
-  const User = await company.findOne({ _id: userId }).exec();
+  const User = await company.findOne({ _id: userId }).select("-hashedPassword");
 
   if (!User) {
     return res.status(204).json({ message: `User ID ${userId} not found` });

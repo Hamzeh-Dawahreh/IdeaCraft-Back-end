@@ -1,5 +1,5 @@
 const bookingInfo = require("../model/bookingInfo");
-
+const companys = require("../model/companies");
 const handleRequest = async (req, res) => {
   try {
     const user_id = req.user_id;
@@ -212,6 +212,56 @@ const companyConsent = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+const userRating = async (req, res) => {
+  const user_id = req.user_id;
+  const { company_id, rating, service_id } = req.body;
+
+  try {
+    // Update the rating in the bookingInfo collection
+    const updateRating = await bookingInfo.findOneAndUpdate(
+      {
+        company_id: company_id,
+        user_id: user_id,
+        service_id: service_id,
+      },
+      { rating: rating },
+      { new: true } // To return the updated document
+    );
+
+    if (!updateRating) {
+      return res.status(404).json({ message: "No matching record found" });
+    }
+
+    // Calculate the new rating for the company
+    const ratings = await bookingInfo.find(
+      { company_id: company_id },
+      { rating: 1 }
+    );
+
+    let totalRating = 0;
+    ratings.forEach((booking) => {
+      totalRating += booking.rating;
+    });
+
+    const averageRating = (totalRating / ratings.length).toFixed(1);
+
+    // Update the rating in the companys collection
+    const updatedCompany = await companys.findOneAndUpdate(
+      {
+        _id: company_id,
+      },
+      { rating: averageRating },
+      { new: true }
+    );
+    console.log("updatedCompany", updatedCompany);
+    console.log("company_id", company_id);
+    console.log("averageRating", averageRating);
+    return res.status(200).json({ message: "Rating updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   handleRequest,
@@ -221,4 +271,5 @@ module.exports = {
   getBooking,
   userConsent,
   companyConsent,
+  userRating,
 };

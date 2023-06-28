@@ -3,16 +3,8 @@ const mongoose = require("mongoose");
 const application = new mongoose.Schema(
   {
     company_id: {
-      type: String,
-      required: true,
-    },
-
-    companyname: {
-      type: String,
-      required: true,
-    },
-    industry: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "company", // Referencing the company model
       required: true,
     },
 
@@ -21,10 +13,6 @@ const application = new mongoose.Schema(
       required: true,
     },
 
-    email: {
-      type: String,
-      required: true,
-    },
     country: {
       type: String,
       required: true,

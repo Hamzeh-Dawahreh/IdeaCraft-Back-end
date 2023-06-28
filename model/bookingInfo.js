@@ -35,6 +35,9 @@ const bookingInfo = new mongoose.Schema(
     companyConsent: {
       type: Boolean,
     },
+    rating: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

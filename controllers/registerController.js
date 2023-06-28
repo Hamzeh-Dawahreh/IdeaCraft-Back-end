@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const { jwtGenerator } = require("../utilities/JWTgenerator");
 const user = require("../model/users");
-const company = require("../model/companys");
+const company = require("../model/companies");
 const handleNewUser = async (req, res) => {
   const { firstname, lastname, username, email, password, role } = req.body;
   // Check for duplicate usernames and emails in the db
@@ -42,10 +42,10 @@ const handleNewUser = async (req, res) => {
 const handleNewCompany = async (req, res) => {
   const { companyname, industry, email, password, role } = req.body;
   // Check for duplicate usernames and emails in the db
-  const duplicateEmail = await company.findOne({ email: email }).exec();
-  const duplicateCompanyname = await company
-    .findOne({ companyname: companyname })
-    .exec();
+  const duplicateEmail = await company.findOne({ email: email });
+  const duplicateCompanyname = await company.findOne({
+    companyname: companyname,
+  });
 
   if (companyname == null && duplicateCompanyname) {
     return res.status(409).send({ Umessage: " Company Name already exists" });
