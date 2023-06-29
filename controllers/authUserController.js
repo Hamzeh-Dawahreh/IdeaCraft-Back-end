@@ -25,7 +25,7 @@ const handleLogin = async (req, res) => {
       const token = jwtGenerator(foundUser);
       res.status(200).json({ token });
     } else {
-      res.sendStatus(401);
+      return res.status(401).json({ message: "Invalid password" });
     }
   } catch (error) {
     // Handle any errors that occur during the login process

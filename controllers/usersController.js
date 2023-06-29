@@ -29,6 +29,12 @@ const updateCompany = async (req, res) => {
   const userId = req.user_id;
   let { companyname, industry, details, email } = req.body;
 
+  // Check if email and username properties exist in req.body
+  if (!email || !companyname) {
+    console.log("Email or username is missing in the request body.");
+    return res.status(400).json({ error: "Missing email or username" });
+  }
+
   // Convert email and username to lowercase
   email = email.toLowerCase();
   companyname = companyname.toLowerCase();
@@ -70,6 +76,12 @@ const updateCompany = async (req, res) => {
 const updateUser = async (req, res) => {
   const userId = req.user_id;
   let { firstname, lastname, username, email } = req.body;
+
+  // Check if email and username properties exist in req.body
+  if (!email || !username) {
+    console.log("Email or username is missing in the request body.");
+    return res.status(400).json({ error: "Missing email or username" });
+  }
 
   // Convert email and username to lowercase
   email = email.toLowerCase();

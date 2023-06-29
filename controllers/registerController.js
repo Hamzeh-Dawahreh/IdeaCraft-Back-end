@@ -5,6 +5,12 @@ const company = require("../model/companies");
 const handleNewUser = async (req, res) => {
   let { firstname, lastname, username, email, password, role } = req.body;
 
+  // Check if email and username properties exist in req.body
+  if (!email || !username) {
+    console.log("Email or username is missing in the request body.");
+    return res.status(400).json({ error: "Missing email or username" });
+  }
+
   // Convert email and username to lowercase
   email = email.toLowerCase();
   username = username.toLowerCase();
@@ -46,6 +52,12 @@ const handleNewUser = async (req, res) => {
 };
 const handleNewCompany = async (req, res) => {
   let { companyname, industry, email, password, role } = req.body;
+
+  // Check if email and username properties exist in req.body
+  if (!email || !username) {
+    console.log("Email or username is missing in the request body.");
+    return res.status(400).json({ error: "Missing email or username" });
+  }
 
   // Convert email and username to lowercase
   email = email.toLowerCase();
