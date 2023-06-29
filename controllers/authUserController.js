@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const { jwtGenerator } = require("../utilities/JWTgenerator");
 
 const handleLogin = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
   if (!email || !password)
     return res
       .status(400)

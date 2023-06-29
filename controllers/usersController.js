@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const getUser = async (req, res) => {
   const userId = req.user_id;
 
-  const User = await user.findOne({ _id: userId });
+  const User = await user.findOne({ _id: userId }).select("-hashedPassword");
 
   if (!User) {
     return res.status(204).json({ message: `User ID ${userId} not found` });
@@ -27,7 +27,7 @@ const getCompany = async (req, res) => {
 
 const updateCompany = async (req, res) => {
   const userId = req.user_id;
-  const { companyname, industry, details, email } = req.body;
+  let { companyname, industry, details, email } = req.body;
 
   // Convert email and username to lowercase
   email = email.toLowerCase();
@@ -67,17 +67,58 @@ const updateCompany = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const updateUser = async (req, res) => {
+  const userId = req.user_id;
+  let { firstname, lastname, username, email } = req.body;
+
+  // Convert email and username to lowercase
+  email = email.toLowerCase();
+  username = username.toLowerCase();
+
+  const userExists = await user.findOne({
+    _id: { $ne: userId }, //exclude the current user from the search (Select all where ._id !=userId)
+    $or: [{ email: email }, { username: username }],
+  });
+
+  if (userExists) {
+    if (userExists.email === email) {
+      return res.status(409).send({ Emessage: "Email already exists" });
+    } else if (userExists.username === username) {
+      return res.status(409).send({ Umessage: "Username already exists" });
+    }
+  }
+
+  try {
+    const User = await user.findById(userId);
+    if (!User) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Update user details
+    User.username = username;
+    User.firstname = firstname;
+    User.lastname = lastname;
+    User.email = email;
+
+    // Save the updated user to the database
+    await User.save();
+
+    res.status(200).json({ message: "User details updated successfully" });
+  } catch (error) {
+    console.error("Error updating user details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 const updatePassword = async (req, res) => {
   const userId = req.user_id;
   const { oldPassword, newPassword } = req.body;
-
+  const role = req.role;
   try {
     let User;
     // Check if the user is in the User collection
-    User = await user.findById(userId);
-
-    // If not found in the User collection, check the Company collection
-    if (!User) {
+    if (role === "user") {
+      User = await user.findById(userId);
+    } else if (role === "company") {
       User = await company.findById(userId);
     }
 
@@ -106,4 +147,10 @@ const updatePassword = async (req, res) => {
   }
 };
 
-module.exports = { getUser, updateCompany, getCompany, updatePassword };
+module.exports = {
+  getUser,
+  updateCompany,
+  getCompany,
+  updatePassword,
+  updateUser,
+};

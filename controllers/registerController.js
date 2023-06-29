@@ -3,7 +3,7 @@ const { jwtGenerator } = require("../utilities/JWTgenerator");
 const user = require("../model/users");
 const company = require("../model/companies");
 const handleNewUser = async (req, res) => {
-  const { firstname, lastname, username, email, password, role } = req.body;
+  let { firstname, lastname, username, email, password, role } = req.body;
 
   // Convert email and username to lowercase
   email = email.toLowerCase();
@@ -45,7 +45,7 @@ const handleNewUser = async (req, res) => {
     });
 };
 const handleNewCompany = async (req, res) => {
-  const { companyname, industry, email, password, role } = req.body;
+  let { companyname, industry, email, password, role } = req.body;
 
   // Convert email and username to lowercase
   email = email.toLowerCase();

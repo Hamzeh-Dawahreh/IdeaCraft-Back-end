@@ -8,6 +8,8 @@ const verifyJWT = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.jwtSecret); // Verify the JWT token
     const userId = decodedToken.user_id; // Extract the user ID from the token payload
     req.user_id = userId;
+    const role = decodedToken.role;
+    req.role = role;
 
     next();
   } catch (err) {
