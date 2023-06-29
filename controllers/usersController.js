@@ -28,8 +28,13 @@ const getCompany = async (req, res) => {
 const updateCompany = async (req, res) => {
   const userId = req.user_id;
   const { companyname, industry, details, email } = req.body;
+
+  // Convert email and username to lowercase
+  email = email.toLowerCase();
+  companyname = companyname.toLowerCase();
+
   const companyExists = await company.findOne({
-    _id: { $ne: userId }, //exclude the current user from the search
+    _id: { $ne: userId }, //exclude the current user from the search (Select all where ._id !=userId)
     $or: [{ email: email }, { companyname: companyname }],
   });
 

@@ -9,6 +9,8 @@ const handleLogin = async (req, res) => {
       .status(400)
       .json({ message: "email and password are required." });
 
+  email = email.toLowerCase(); // Convert email to lowercase
+
   try {
     const foundCompany = await company.findOne({ email: email });
     if (!foundCompany) {

@@ -4,6 +4,11 @@ const user = require("../model/users");
 const company = require("../model/companies");
 const handleNewUser = async (req, res) => {
   const { firstname, lastname, username, email, password, role } = req.body;
+
+  // Convert email and username to lowercase
+  email = email.toLowerCase();
+  username = username.toLowerCase();
+
   // Check for duplicate usernames and emails in the db
   const duplicateUsername = await user.findOne({ username: username });
   const duplicateEmail = await user.findOne({ email: email });
@@ -41,6 +46,11 @@ const handleNewUser = async (req, res) => {
 };
 const handleNewCompany = async (req, res) => {
   const { companyname, industry, email, password, role } = req.body;
+
+  // Convert email and username to lowercase
+  email = email.toLowerCase();
+  companyname = companyname.toLowerCase();
+
   // Check for duplicate usernames and emails in the db
   const duplicateEmail = await company.findOne({ email: email });
   const duplicateCompanyname = await company.findOne({
