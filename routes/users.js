@@ -18,4 +18,5 @@ router.put("/deleteUser/:id", verifyJWT, adminController.deleteUser);
 router.put("/deleteCompany/:id", verifyJWT, adminController.deleteCompany);
 //mutual
 router.put("/updatePassword", verifyJWT, usersController.updatePassword);
+router.get("/getAllCollectionsCounts", adminController.getCollectionCounts);
 module.exports = router;

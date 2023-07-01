@@ -19,6 +19,14 @@ const handleLogin = async (req, res) => {
           "There is no account with this email address! Make sure you are choosing the right role.",
       });
     }
+
+    if (foundCompany.isDeleted) {
+      return res.status(401).json({
+        message:
+          "Your account has been deleted. Please contact us for further assistance.",
+      });
+    }
+
     const match = await bcrypt.compare(password, foundCompany.hashedPassword);
     if (match) {
       const token = jwtGenerator(foundCompany);

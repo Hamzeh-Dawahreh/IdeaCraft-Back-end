@@ -38,4 +38,9 @@ router.put(
   verifyJWT,
   servicesFormController.deleteService
 );
+router.put(
+  "/approveService/:id",
+  verifyJWT,
+  servicesFormController.approveService
+);
 module.exports = router;

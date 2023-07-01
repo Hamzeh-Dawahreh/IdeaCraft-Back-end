@@ -97,7 +97,8 @@ const getResponse = async (req, res) => {
   try {
     const bookings = await bookingInfo
       .find({ user_id: user_id })
-      .populate("company_id", "-hashedPassword"); // Exclude the hashedPassword field
+      .populate("company_id", "-hashedPassword")
+      .populate("service_id"); // Exclude the hashedPassword field
 
     if (!bookings) {
       return res.status(204).json({ message: `User ID ${user_id} not found` });
@@ -214,7 +215,6 @@ const companyConsent = async (req, res) => {
 const userRating = async (req, res) => {
   const user_id = req.user_id;
   const { company_id, rating, service_id } = req.body;
-
   try {
     // Update the rating in the bookingInfo collection
     const updateRating = await bookingInfo.findOneAndUpdate(
@@ -238,11 +238,16 @@ const userRating = async (req, res) => {
     );
 
     let totalRating = 0;
+    let count = 0;
+
     ratings.forEach((booking) => {
-      totalRating += booking.rating;
+      if (booking.rating !== 0) {
+        totalRating += booking.rating;
+        count++;
+      }
     });
 
-    const averageRating = (totalRating / ratings.length).toFixed(1);
+    const averageRating = (totalRating / count).toFixed(1);
 
     // Update the rating in the companys collection
     const updatedCompany = await companys.findOneAndUpdate(
@@ -252,9 +257,6 @@ const userRating = async (req, res) => {
       { rating: averageRating },
       { new: true }
     );
-    console.log("updatedCompany", updatedCompany);
-    console.log("company_id", company_id);
-    console.log("averageRating", averageRating);
     return res.status(200).json({ message: "Rating updated successfully" });
   } catch (error) {
     console.error(error);

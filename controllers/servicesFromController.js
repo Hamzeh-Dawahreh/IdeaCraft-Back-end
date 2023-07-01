@@ -55,11 +55,13 @@ const handleAddForm = async (req, res) => {
 
 const getRealEstate = async (req, res) => {
   try {
-    const allData = await form.find().populate({
-      path: "company_id",
-      select: "-hashedPassword",
-      match: { industry: "Real Estates" },
-    });
+    const allData = await form
+      .find({ isApproved: true, isDeleted: false })
+      .populate({
+        path: "company_id",
+        select: "-hashedPassword",
+        match: { industry: "Real Estates" },
+      });
     res.status(200).json(allData);
   } catch (err) {
     console.log("Error retrieving data:", err);
@@ -86,11 +88,11 @@ const getService = async (req, res) => {
   const company_id = req.user_id;
   try {
     const service = await form
-      .findOne({ company_id: company_id })
-      .populate("company_id", "-hashedPasswod");
+      .findOne({ company_id: company_id, isDeleted: { $ne: true } })
+      .populate("company_id", "-hashedPassword");
+
     return res.json({ service });
   } catch (error) {
-    // Handle any errors that occur during the database query
     return res.status(500).json({ message: "Error retrieving user data" });
   }
 };
@@ -110,6 +112,29 @@ const deleteService = async (req, res) => {
     return res.status(500).json({ message: "Error retrieving user data" });
   }
 };
+const approveService = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isApproved } = req.body;
+    const message = isApproved == true ? "approved" : "declined";
+    const existingService = await form.findOne({ _id: id });
+
+    if (existingService.isApproved == isApproved) {
+      return res.send({ message: `Service is already ${message}` });
+    }
+
+    const updatedService = await form.findOneAndUpdate(
+      { _id: id },
+      { $set: { isApproved: isApproved } },
+      { new: true }
+    );
+
+    return res.send(`Service ${message}`);
+  } catch (error) {
+    // Handle any errors that occur during the database query
+    return res.status(500).json({ message: "Error retrieving user data" });
+  }
+};
 
 module.exports = {
   handleAddForm,
@@ -117,4 +142,5 @@ module.exports = {
   getService,
   getAllServices,
   deleteService,
+  approveService,
 };

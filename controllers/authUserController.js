@@ -20,6 +20,13 @@ const handleLogin = async (req, res) => {
       });
     }
 
+    if (foundUser.isDeleted) {
+      return res.status(401).json({
+        message:
+          "Your account has been deleted. Please contact us for further assistance.",
+      });
+    }
+
     const match = await bcrypt.compare(password, foundUser.hashedPassword);
     if (match) {
       const token = jwtGenerator(foundUser);

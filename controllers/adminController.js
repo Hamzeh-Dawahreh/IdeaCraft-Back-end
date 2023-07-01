@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const admin = require("../model/admin");
 const user = require("../model/users");
 const company = require("../model/companies");
+const service = require("../model/applicationForm");
 const { jwtGenerator } = require("../utilities/JWTgenerator");
 
 const handleNewUser = async (req, res) => {
@@ -86,20 +87,53 @@ const deleteCompany = async (req, res) => {
     try {
       const { id } = req.params;
       const { isDeleted } = req.body;
-      const deleteUser = await company.findOneAndUpdate(
+
+      // Soft delete the company
+      const deleteCompany = await company.findOneAndUpdate(
         { _id: id },
         { $set: { isDeleted: isDeleted } },
         { new: true }
       );
 
-      return res.send("User Deleted");
+      // Soft delete associated services
+      const deleteServices = await service.updateMany(
+        { company_id: id },
+        { $set: { isDeleted: isDeleted } }
+      );
+
+      return res.send("Company and associated services deleted");
     } catch (error) {
       // Handle any errors that occur during the database query
-      return res.status(500).json({ message: "Error retrieving user data" });
+      return res
+        .status(500)
+        .json({ message: "Error deleting company and services" });
     }
   } else {
     return res.status(400).json({ message: "User must be admin" });
   }
 };
+const getCollectionCounts = async (req, res) => {
+  try {
+    const userCount = await user.countDocuments();
+    const companyCount = await company.countDocuments();
+    const serviceCount = await service.countDocuments();
 
-module.exports = { handleNewUser, handleLogin, deleteUser, deleteCompany };
+    const collectionCounts = {
+      users: userCount,
+      companies: companyCount,
+      services: serviceCount,
+    };
+
+    res.json(collectionCounts);
+  } catch (error) {
+    console.error("Failed to retrieve collection counts", error);
+    res.status(500).json({ error: "Failed to retrieve collection counts" });
+  }
+};
+module.exports = {
+  handleNewUser,
+  handleLogin,
+  deleteUser,
+  deleteCompany,
+  getCollectionCounts,
+};
