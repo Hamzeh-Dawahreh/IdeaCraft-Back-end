@@ -66,6 +66,21 @@ const getRealEstate = async (req, res) => {
     res.status(500).json({ err: "An error occurred while getting data" });
   }
 };
+const getAllServices = async (req, res) => {
+  const industries = ["Real Estates", "Technology", "Manufacturing"];
+
+  try {
+    const allData = await form.find().populate({
+      path: "company_id",
+      select: "-hashedPassword",
+      match: { industry: { $in: industries } },
+    });
+    res.status(200).json(allData);
+  } catch (err) {
+    console.log("Error retrieving data:", err);
+    res.status(500).json({ err: "An error occurred while getting data" });
+  }
+};
 
 const getService = async (req, res) => {
   const company_id = req.user_id;
@@ -79,5 +94,27 @@ const getService = async (req, res) => {
     return res.status(500).json({ message: "Error retrieving user data" });
   }
 };
+const deleteService = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isDeleted } = req.body;
+    const deleteService = await form.findOneAndUpdate(
+      { _id: id },
+      { $set: { isDeleted: isDeleted } },
+      { new: true }
+    );
 
-module.exports = { handleAddForm, getRealEstate, getService };
+    return res.send("Service Deleted");
+  } catch (error) {
+    // Handle any errors that occur during the database query
+    return res.status(500).json({ message: "Error retrieving user data" });
+  }
+};
+
+module.exports = {
+  handleAddForm,
+  getRealEstate,
+  getService,
+  getAllServices,
+  deleteService,
+};

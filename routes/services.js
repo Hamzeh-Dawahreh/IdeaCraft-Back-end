@@ -32,4 +32,10 @@ router.post(
 );
 router.get("/getRealEstate", servicesFormController.getRealEstate);
 router.get("/getService", verifyJWT, servicesFormController.getService);
+router.get("/getAllServices", verifyJWT, servicesFormController.getAllServices);
+router.put(
+  "/deleteService/:id",
+  verifyJWT,
+  servicesFormController.deleteService
+);
 module.exports = router;

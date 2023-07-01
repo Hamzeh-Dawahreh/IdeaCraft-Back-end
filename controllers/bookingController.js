@@ -9,7 +9,6 @@ const handleRequest = async (req, res) => {
       service_id: service_id,
       company_id: company_id,
     });
-    console.log("alreadyBooked", alreadyBooked);
     if (alreadyBooked) {
       return res
         .status(409)

@@ -24,6 +24,26 @@ const getCompany = async (req, res) => {
   delete User.hashedPassword; // Remove the hashed password property
   return res.json(User);
 };
+const getAllUsers = async (req, res) => {
+  try {
+    const allData = await user.find().select("-hashedPassword");
+    res.status(200).json(allData);
+    // console.log(allData);
+  } catch (err) {
+    console.log("Error retrieving data:", err);
+    res.status(500).json({ err: "An error occurred while getting data" });
+  }
+};
+const getAllCompanies = async (req, res) => {
+  try {
+    const allData = await company.find().select("-hashedPassword");
+    res.status(200).json(allData);
+    // console.log(allData);
+  } catch (err) {
+    console.log("Error retrieving data:", err);
+    res.status(500).json({ err: "An error occurred while getting data" });
+  }
+};
 
 const updateCompany = async (req, res) => {
   const userId = req.user_id;
@@ -165,4 +185,6 @@ module.exports = {
   getCompany,
   updatePassword,
   updateUser,
+  getAllUsers,
+  getAllCompanies,
 };

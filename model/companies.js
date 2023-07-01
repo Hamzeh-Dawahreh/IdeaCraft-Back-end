@@ -26,6 +26,10 @@ const companySchema = new mongoose.Schema(
     rating: {
       type: Number,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

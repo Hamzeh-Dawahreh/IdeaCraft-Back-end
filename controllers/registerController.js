@@ -54,7 +54,7 @@ const handleNewCompany = async (req, res) => {
   let { companyname, industry, email, password, role } = req.body;
 
   // Check if email and username properties exist in req.body
-  if (!email || !username) {
+  if (!email || !companyname) {
     console.log("Email or username is missing in the request body.");
     return res.status(400).json({ error: "Missing email or username" });
   }
