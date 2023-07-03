@@ -31,8 +31,14 @@ router.post(
   servicesFormController.handleAddForm
 );
 router.get("/getRealEstate", servicesFormController.getRealEstate);
+router.get("/getManufacturing", servicesFormController.getManufacturing);
+router.get("/getTechnology", servicesFormController.getTechnology);
 router.get("/getService", verifyJWT, servicesFormController.getService);
 router.get("/getAllServices", verifyJWT, servicesFormController.getAllServices);
+router.get(
+  "/getTopRatedCompanies",
+  servicesFormController.getTopRatedCompanies
+);
 router.put(
   "/deleteService/:id",
   verifyJWT,
