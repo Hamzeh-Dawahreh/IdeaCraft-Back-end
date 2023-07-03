@@ -19,17 +19,18 @@ const handleAddForm = async (req, res) => {
 
   try {
     // Check for duplicate forms in the database
-    let existingForm = await ApplicationForm.findOne({ company_id: userId });
+    let existingService = await ApplicationForm.findOne({ company_id: userId });
 
-    if (existingForm) {
+    if (existingService) {
       // Update the existing ApplicationForm  with the incoming data
-      existingForm.phone = phone;
-      existingForm.country = country;
-      existingForm.city = city;
-      existingForm.description = description;
-      existingForm.Images = imagePaths;
-
-      await existingForm.save();
+      existingService.phone = phone;
+      existingService.country = country;
+      existingService.city = city;
+      existingService.description = description;
+      existingService.Images = imagePaths;
+      existingService.isDeleted = false;
+      existingService.isApproved = undefined;
+      await existingService.save();
 
       return res.status(200).send("Form updated successfully");
     }
@@ -54,6 +55,7 @@ const handleAddForm = async (req, res) => {
 };
 
 const getRealEstate = async (req, res) => {
+  // const industry = req.params
   try {
     const allData = await ApplicationForm.find({
       isApproved: true,
@@ -116,63 +118,6 @@ const getAllServices = async (req, res) => {
     res.status(500).json({ err: "An error occurred while getting data" });
   }
 };
-// const getTopRatedCompanies = async (req, res) => {
-//   const industries = ["Real Estates", "Technology", "Manufacturing"];
-//   const topCompaniesPerField = 3; // Number of top Company  to retrieve per field
-
-//   try {
-//     const allData = await ApplicationForm .aggregate([
-//       {
-//         $lookup: {
-//           from: "Company ",
-//           localField: "company_id",
-//           foreignField: "_id",
-//           as: "company",
-//         },
-//       },
-//       {
-//         $unwind: "$company",
-//       },
-//       {
-//         $match: { "company.industry": { $in: industries } },
-//       },
-//       {
-//         $sort: { "company.rating": -1 },
-//       },
-//       {
-//         $group: {
-//           _id: "$company.industry",
-//           Company : { $push: "$company" },
-//         },
-//       },
-//       {
-//         $project: {
-//           _id: 0,
-//           industry: "$_id",
-//           Company : {
-//             $slice: ["$Company ", topCompaniesPerField],
-//           },
-//         },
-//       },
-//       {
-//         $project: {
-//           industry: 1,
-//           Company : {
-//             _id: 1,
-//             companyname: 1,
-//             industry: 1,
-//             rating: 1,
-//           },
-//         },
-//       },
-//     ]);
-
-//     res.status(200).json(allData);
-//   } catch (err) {
-//     console.log("Error retrieving data:", err);
-//     res.status(500).json({ err: "An error occurred while getting data" });
-//   }
-// };
 const getTopRatedCompanies = async (req, res) => {
   const industries = ["Real Estates", "Technology", "Manufacturing"];
   const topCompaniesPerField = 9; // Number of top companies to retrieve per field
