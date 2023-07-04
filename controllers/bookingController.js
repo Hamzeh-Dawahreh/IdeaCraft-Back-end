@@ -93,7 +93,6 @@ const companyRes = async (req, res) => {
 };
 const getResponse = async (req, res) => {
   const user_id = req.user_id;
-
   try {
     const bookings = await bookingInfo
       .find({ user_id: user_id })

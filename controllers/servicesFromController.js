@@ -54,21 +54,28 @@ const handleAddForm = async (req, res) => {
   }
 };
 
-const getRealEstate = async (req, res) => {
-  // const industry = req.params
+const getSolution = async (req, res) => {
+  const { id } = req.params;
+  const industry = id;
   try {
     const allData = await ApplicationForm.find({
       isApproved: true,
       isDeleted: false,
-    }).populate({
-      path: "company_id",
-      select: "-hashedPassword",
-      match: { industry: "Real Estates" },
-    });
-    res.status(200).json(allData);
+      company_id: { $exists: true },
+    })
+      .populate({
+        path: "company_id",
+        select: "-hashedPassword",
+        match: { industry: { $eq: industry } },
+      })
+      .exec();
+
+    const filteredData = allData.filter((data) => data.company_id !== null);
+
+    res.status(200).json(filteredData);
   } catch (err) {
     console.log("Error retrieving data:", err);
-    res.status(500).json({ err: "An error occurred while getting data" });
+    res.status(500).json({ error: "An error occurred while getting data" });
   }
 };
 const getTechnology = async (req, res) => {
@@ -213,7 +220,7 @@ const approveService = async (req, res) => {
 
 module.exports = {
   handleAddForm,
-  getRealEstate,
+  getSolution,
   getManufacturing,
   getTechnology,
   getService,

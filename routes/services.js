@@ -7,17 +7,15 @@ const router = express.Router();
 // Configure Multer to specify the destination and filename
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    //callback
     // Check the file type and set the destination directory accordingly
     if (file.fieldname === "images") {
       cb(null, "images");
-    } else if (file.fieldname === "reports") {
-      cb(null, "reports");
     } else {
       cb(new Error("Invalid fieldname"));
     }
   },
   filename: (req, file, cb) => {
-    console.log(file);
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
@@ -30,9 +28,9 @@ router.post(
   upload.fields([{ name: "images", maxCount: 1 }]),
   servicesFormController.handleAddForm
 );
-router.get("/getRealEstate", servicesFormController.getRealEstate);
-router.get("/getManufacturing", servicesFormController.getManufacturing);
-router.get("/getTechnology", servicesFormController.getTechnology);
+router.get("/getSolution/:id", servicesFormController.getSolution);
+// router.get("/getManufacturing", servicesFormController.getManufacturing);
+// router.get("/getTechnology", servicesFormController.getTechnology);
 router.get("/getService", verifyJWT, servicesFormController.getService);
 router.get("/getAllServices", verifyJWT, servicesFormController.getAllServices);
 router.get(
