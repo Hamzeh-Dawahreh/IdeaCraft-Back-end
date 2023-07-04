@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { jwtGenerator } = require("../utilities/JWTgenerator");
+const { jwtGenerator } = require("../utils/JWTgenerator");
 const user = require("../model/users");
 const company = require("../model/companies");
 const handleNewUser = async (req, res) => {

@@ -1,6 +1,6 @@
 const user = require("../model/users");
 const bcrypt = require("bcrypt");
-const { jwtGenerator } = require("../utilities/JWTgenerator");
+const { jwtGenerator } = require("../utils/JWTgenerator");
 
 const handleLogin = async (req, res) => {
   let { email, password } = req.body;

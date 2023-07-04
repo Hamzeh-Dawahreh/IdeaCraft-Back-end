@@ -3,10 +3,12 @@ const admin = require("../model/admin");
 const user = require("../model/users");
 const company = require("../model/companies");
 const service = require("../model/applicationForm");
-const { jwtGenerator } = require("../utilities/JWTgenerator");
+const Contact = require("../model/contactUs");
+const { jwtGenerator } = require("../utils/JWTgenerator");
+const contactUs = require("../model/contactUs");
 
 const handleNewUser = async (req, res) => {
-  const { role, fullName, email, phone, password } = req.body;
+  const { role, fullName, email, password } = req.body;
   // Check for duplicate usernames and emails in the db
   const duplicateEmail = await admin.findOne({ email: email }).exec();
 
@@ -130,10 +132,50 @@ const getCollectionCounts = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve collection counts" });
   }
 };
+
+const createAndUpdateContact = async (req, res) => {
+  const role = req.role;
+  const { email, location, phone } = req.body;
+
+  if (role === "admin") {
+    try {
+      let contact = await Contact.findOne();
+
+      if (!contact) {
+        // Create a new contact if it doesn't exist
+        contact = new Contact({ email, location, phone });
+      } else {
+        // Update the existing contact if it exists
+        contact.email = email;
+        contact.location = location;
+        contact.phone = phone;
+      }
+      await contact.save();
+
+      return res
+        .status(200)
+        .json({ message: "Contact updated successfully", contact });
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  } else {
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+};
+const getContact = async (req, res) => {
+  try {
+    const Data = await Contact.find();
+    return res.status(200).json(Data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 module.exports = {
   handleNewUser,
   handleLogin,
   deleteUser,
   deleteCompany,
   getCollectionCounts,
+  createAndUpdateContact,
+  getContact,
 };
