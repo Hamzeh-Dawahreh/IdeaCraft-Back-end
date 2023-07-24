@@ -29,8 +29,6 @@ router.post(
   servicesFormController.handleAddForm
 );
 router.get("/getSolution/:id", servicesFormController.getSolution);
-// router.get("/getManufacturing", servicesFormController.getManufacturing);
-// router.get("/getTechnology", servicesFormController.getTechnology);
 router.get("/getService", verifyJWT, servicesFormController.getService);
 router.get("/getAllServices", verifyJWT, servicesFormController.getAllServices);
 router.get(

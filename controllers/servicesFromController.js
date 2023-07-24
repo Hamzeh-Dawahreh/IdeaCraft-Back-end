@@ -112,14 +112,36 @@ const getManufacturing = async (req, res) => {
 };
 const getAllServices = async (req, res) => {
   const industries = ["Real Estates", "Technology", "Manufacturing"];
+  const { page } = req.query;
+  const pageNumber = parseInt(page) || 1;
+  const pageSize = 10;
 
   try {
-    const allData = await ApplicationForm.find().populate({
-      path: "company_id",
-      select: "-hashedPassword",
-      match: { industry: { $in: industries } },
+    const totalCount = await ApplicationForm.find()
+      .populate({
+        path: "company_id",
+        select: "-hashedPassword",
+        match: { industry: { $in: industries } },
+      })
+      .countDocuments();
+
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    const allData = await ApplicationForm.find()
+      .populate({
+        path: "company_id",
+        select: "-hashedPassword",
+        match: { industry: { $in: industries } },
+      })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
+    res.status(200).json({
+      totalServices: totalCount,
+      totalPages,
+      currentPage: pageNumber,
+      services: allData,
     });
-    res.status(200).json(allData);
   } catch (err) {
     console.log("Error retrieving data:", err);
     res.status(500).json({ err: "An error occurred while getting data" });

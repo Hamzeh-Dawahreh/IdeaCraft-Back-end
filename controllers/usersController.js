@@ -26,19 +26,52 @@ const getCompany = async (req, res) => {
 };
 const getAllUsers = async (req, res) => {
   try {
-    const allData = await user.find().select("-hashedPassword");
-    res.status(200).json(allData);
-    // console.log(allData);
+    const { page } = req.query;
+    const pageNumber = parseInt(page) || 1;
+    const pageSize = 10;
+
+    const totalCount = await user.countDocuments();
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    const allData = await user
+      .find()
+      .select("-hashedPassword")
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
+    res.status(200).json({
+      totalUsers: totalCount,
+      totalPages,
+      currentPage: pageNumber,
+      users: allData,
+    });
   } catch (err) {
     console.log("Error retrieving data:", err);
     res.status(500).json({ err: "An error occurred while getting data" });
   }
 };
+
 const getAllCompanies = async (req, res) => {
   try {
-    const allData = await company.find().select("-hashedPassword");
-    res.status(200).json(allData);
-    // console.log(allData);
+    const { page } = req.query;
+    const pageNumber = parseInt(page) || 1;
+    const pageSize = 10;
+
+    const totalCount = await company.countDocuments();
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    const allData = await company
+      .find()
+      .select("-hashedPassword")
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
+    res.status(200).json({
+      totalCompanies: totalCount,
+      totalPages,
+      currentPage: pageNumber,
+      companies: allData,
+    });
   } catch (err) {
     console.log("Error retrieving data:", err);
     res.status(500).json({ err: "An error occurred while getting data" });
