@@ -27,7 +27,7 @@ const getCompany = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const { page } = req.query;
-    const pageNumber = parseInt(page) || 1;
+    const pageNumber = parseInt(page);
     const pageSize = 10;
 
     const totalCount = await user.countDocuments();
