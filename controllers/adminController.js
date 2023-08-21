@@ -55,7 +55,7 @@ const handleLogin = async (req, res) => {
       const token = jwtGenerator(foundUser);
       res.status(200).json({ token });
     } else {
-      res.sendStatus(401);
+      res.sendStatus(401).json({ message: "incorrect email or password" });
     }
   } catch (error) {
     // Handle any errors that occur during the login process
