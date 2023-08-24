@@ -165,6 +165,12 @@ const getTopRatedCompanies = async (req, res) => {
         },
       },
       {
+        $match: {
+          "applicationForm.isDeleted": { $ne: true },
+          "applicationForm.isApproved": { $ne: false },
+        },
+      },
+      {
         $project: {
           _id: 1,
           companyname: 1,
