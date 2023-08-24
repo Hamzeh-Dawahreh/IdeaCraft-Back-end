@@ -117,7 +117,10 @@ const getAllServices = async (req, res) => {
   const pageSize = 10;
 
   try {
-    const totalCount = await ApplicationForm.find()
+    const totalCount = await ApplicationForm.find({
+      isDeleted: false,
+      isApproved: true,
+    })
       .populate({
         path: "company_id",
         select: "-hashedPassword",

@@ -30,7 +30,7 @@ const getAllUsers = async (req, res) => {
     const pageNumber = parseInt(page);
     const pageSize = 10;
 
-    const totalCount = await user.countDocuments();
+    const totalCount = await user.find({ isDeleted: false }).countDocuments();
     const totalPages = Math.ceil(totalCount / pageSize);
 
     const allData = await user
@@ -57,7 +57,11 @@ const getAllCompanies = async (req, res) => {
     const pageNumber = parseInt(page) || 1;
     const pageSize = 10;
 
-    const totalCount = await company.countDocuments();
+    const totalCount = await company
+      .find({
+        isDeleted: false,
+      })
+      .countDocuments();
     const totalPages = Math.ceil(totalCount / pageSize);
 
     const allData = await company
